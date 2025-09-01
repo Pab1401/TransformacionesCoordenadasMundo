@@ -1,6 +1,5 @@
 #include "VectorSpace.h"
 
-
 using namespace std;
 
 int main()

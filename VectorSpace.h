@@ -1,11 +1,11 @@
-#include "iostream"
-#include "string"
-#include "cmath"
+#include <iostream>
+#include <string>
+#include <cmath>
 #pragma once
 
 struct Vectores
 {
-	string name;
+	std::string name;
 	float xyz[3];
 };
 
