@@ -14,9 +14,10 @@ class VectorSpace
 public:
 	VectorSpace();
 	~VectorSpace();
-	void VectorAdd(Vectores);
+	void VectorAdd(Vectores &reference);
 	float NumberCheck();
 	void Transformer();
+	void Show();
 
 private:
 	Vectores U;
@@ -24,6 +25,7 @@ private:
 	Vectores W;
 	Vectores cameraPos;
 	Vectores puntoMundo;
+	float puntoFinal[4];
 	float matriz[4][4];
 };
 

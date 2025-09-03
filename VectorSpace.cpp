@@ -14,6 +14,7 @@ VectorSpace::VectorSpace()
     VectorAdd(cameraPos);
     puntoMundo.name = " la posicion del punto en el mundo";
     VectorAdd(puntoMundo);
+    Transformer();
 }
 
 VectorSpace::~VectorSpace()
@@ -21,15 +22,15 @@ VectorSpace::~VectorSpace()
 
 }
 
-void VectorSpace::VectorAdd(Vectores reference)
+void VectorSpace::VectorAdd(Vectores &reference)
 {
-    cout << "Ingresa el valor x de" << reference.name;
+    cout << "Ingresa el valor x de" << reference.name << endl;
     reference.xyz[0] = NumberCheck();
-    cout << "Ingresa el valor y de" << reference.name;
+    cout << "Ingresa el valor y de" << reference.name << endl;
     reference.xyz[1] = NumberCheck();
-    cout << "Ingresa el valor z de" << reference.name;
+    cout << "Ingresa el valor z de" << reference.name << endl;
     reference.xyz[2] = NumberCheck();
-
+    
 }
 
 float VectorSpace::NumberCheck()
@@ -60,6 +61,12 @@ float VectorSpace::NumberCheck()
 
 void VectorSpace::Transformer()
 {
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+            matriz[i][j] = 0.0f;
+    }
+
     for (int i = 0; i < 3; i++)
     {
         matriz[0][i] = U.xyz[i];
@@ -73,4 +80,43 @@ void VectorSpace::Transformer()
     matriz[3][1] = 0;
     matriz[3][2] = 0;
     matriz[3][3] = 1;
+
+    float matrizPunto[4] = {puntoMundo.xyz[0], puntoMundo.xyz[1], puntoMundo.xyz[2], 1};
+
+    for (int i = 0; i < 4; i++)
+        puntoFinal[i] = 0.0f;  // <-- muy importante
+
+
+
+
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            puntoFinal[i] += matriz[i][j] * matrizPunto[j];
+        }
+    }
+    if (puntoFinal[3] != 1)
+    {
+        for (int i = 0; i < 4; i++)
+            puntoFinal[i] = puntoFinal[i] / puntoFinal[3];
+    }
+}
+
+void VectorSpace::Show()
+{
+    cout << "Matriz MTC" << endl;
+    for (int row = 0; row < 4; row++)
+    {
+        for (int col = 0; col < 4; col++)
+        {
+            cout << matriz[row][col] << "\t";
+        }
+        cout << endl;
+    }
+    cout << "\nPunto en coordenadas camara:" << endl;
+    for (int en = 0; en < 3; en++)
+    {
+        cout << puntoFinal[en];
+    }
 }
