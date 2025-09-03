@@ -18,6 +18,8 @@ public:
 	float NumberCheck();
 	void Transformer();
 	void Show();
+	void Normalize(Vectores& reference);
+	bool OrtonormalVerify();
 
 private:
 	Vectores U;

@@ -4,16 +4,25 @@ using namespace std;
 
 VectorSpace::VectorSpace()
 {
-    U.name = "l vector U";
-    V.name = "l vector V";
-    W.name = "l vector W";
-    VectorAdd(U);
-    VectorAdd(V);
-    VectorAdd(W);
-    cameraPos.name = " la posicion de la camara";
-    VectorAdd(cameraPos);
-    puntoMundo.name = " la posicion del punto en el mundo";
-    VectorAdd(puntoMundo);
+    bool verified = false;
+    while (!verified)
+    {
+        U.name = "l vector U";
+        V.name = "l vector V";
+        W.name = "l vector W";
+        VectorAdd(U);
+        Normalize(U);
+        VectorAdd(V);
+        Normalize(V);
+        VectorAdd(W);
+        Normalize(W);
+        cameraPos.name = " la posicion de la camara";
+        VectorAdd(cameraPos);
+        puntoMundo.name = " la posicion del punto en el mundo";
+        VectorAdd(puntoMundo);
+        if (OrtonormalVerify())
+            verified = true;
+    }
     Transformer();
 }
 
@@ -30,7 +39,6 @@ void VectorSpace::VectorAdd(Vectores &reference)
     reference.xyz[1] = NumberCheck();
     cout << "Ingresa el valor z de" << reference.name << endl;
     reference.xyz[2] = NumberCheck();
-    
 }
 
 float VectorSpace::NumberCheck()
@@ -84,10 +92,7 @@ void VectorSpace::Transformer()
     float matrizPunto[4] = {puntoMundo.xyz[0], puntoMundo.xyz[1], puntoMundo.xyz[2], 1};
 
     for (int i = 0; i < 4; i++)
-        puntoFinal[i] = 0.0f;  // <-- muy importante
-
-
-
+        puntoFinal[i] = 0.0f;
 
     for (int i = 0; i < 4; i++)
     {
@@ -117,6 +122,35 @@ void VectorSpace::Show()
     cout << "\nPunto en coordenadas camara:" << endl;
     for (int en = 0; en < 3; en++)
     {
-        cout << puntoFinal[en];
+        cout << puntoFinal[en] << "\t";
     }
 }
+
+void VectorSpace::Normalize(Vectores& reference)
+{
+    Vectores temp = reference;
+    for (int i = 0; i < 3; i++)
+        reference.xyz[i] = reference.xyz[i] / sqrt(temp.xyz[0] * temp.xyz[0] + temp.xyz[1] * temp.xyz[1] + temp.xyz[2] * temp.xyz[2]);
+}
+
+bool VectorSpace::OrtonormalVerify()
+{
+    auto dot = [](Vectores& A, Vectores& B) {
+        return A.xyz[0] * B.xyz[0] + A.xyz[1] * B.xyz[1] + A.xyz[2] * B.xyz[2];
+        };
+    auto norm = [](Vectores& A) {
+        return sqrt(A.xyz[0] * A.xyz[0] + A.xyz[1] * A.xyz[1] + A.xyz[2] * A.xyz[2]);
+        };
+    const float EPS = 1e-6;
+
+    if (fabs(norm(U) - 1.0f) > EPS) return false;
+    if (fabs(norm(V) - 1.0f) > EPS) return false;
+    if (fabs(norm(W) - 1.0f) > EPS) return false;
+
+    if (fabs(dot(U, V)) > EPS) return false;
+    if (fabs(dot(U, W)) > EPS) return false;
+    if (fabs(dot(V, W)) > EPS) return false;
+
+    return true;
+}
+
